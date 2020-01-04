@@ -1,6 +1,6 @@
 <template>
-  <div>
-    这是根组件
-    <router-view />  
-  </div>
+  <keep-alive>
+    <!-- 这是根组件 -->
+    <router-view />
+  </keep-alive>
 </template>

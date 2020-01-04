@@ -1,0 +1,34 @@
+/* 初始化项目的样式 */
+
+*{
+    margin: 0;
+    padding: 0;
+}
+html,body{
+    height: 100%;
+}
+ul,li{
+    list-style: none;
+}
+img{
+    display: block;
+}
+
+.clearfix:after{
+    display: block;
+    content: '';
+    clear: both;
+}
+#main{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+#content{
+    position: relative;
+    margin-bottom: 50px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
