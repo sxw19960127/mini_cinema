@@ -3,17 +3,10 @@
 <template>
    <div class="city_body">
       <div class="city_list">
-         <div class="city_hot">
+         <!-- <div class="city_hot">
             <h2>热门城市</h2>
             <ul class="clearfix">
                <li>上海</li>
-               <li>北京</li>
-               <li>上海</li>
-               <li>北京</li>
-               <li>上海</li>
-               <li>北京</li>
-               <li>上海</li>
-               <li>北京</li>
             </ul>
          </div>
          <div class="city_sort">
@@ -26,24 +19,30 @@
                   <li>安阳</li>
                </ul>
             </div>
-            <div>
-               <h2>B</h2>
+         </div> -->
+         <div class="city_hot">
+            <h2>热门城市</h2>
+            <ul class="clearfix">
+               <li v-for="item in hotList" :key="item.id">{{ item.nm }}</li>
+            </ul>
+         </div>
+         <div class="city_sort" ref="city_sort">
+            <div v-for="item in cityList" :key="item.index">
+               <h2>{{ item.index }}</h2>
                <ul>
-                  <li>北京</li>
-                  <li>保定</li>
-                  <li>蚌埠</li>
-                  <li>包头</li>
+                  <li v-for="itemList in item.list" :key="itemList.id">{{ itemList.nm }}</li>
                </ul>
             </div>
          </div>
       </div>
       <div class="city_index">
          <ul>
-            <li>A</li>
+            <!-- <li>A</li>
             <li>B</li>
             <li>C</li>
             <li>D</li>
-            <li>E</li>
+            <li>E</li> -->
+            <li v-for="(item,index) in cityList" :key="item.index" @touchstart="handleToIndex(index)">{{ item.index }}</li>
          </ul>
       </div> 
    </div>
@@ -51,7 +50,87 @@
 
 <script>
 export default {
-   name: 'City'
+   name: 'City',
+   data() {
+      return {
+         cityList: [],
+         hotList: []
+      }
+   },
+   mounted() {
+      this.axios.get('/api/cityList').then((res) => {
+         // console.log(res)
+         let msg = res.data.msg
+         if(msg === 'ok') {
+            // 获取到的所有数据
+            let cities = res.data.data.cities 
+            // [ { index: 'A',list: [{ name: '安徽',id: 1 },{ name: '埃及',id: 2 } ]} ] 将数据整理成这种结构
+            // 封装一个函数,将原始数据传递进去,以达到格式化的效果
+            var { cityList,hotList } = this.formatCityList(cities)
+            this.cityList = cityList;
+            this.hotList = hotList;
+         }
+      })
+   },
+   methods: {
+      formatCityList(cities) {
+         let cityList = [] // 最后整理完成的数据
+         let hotList = [] // 筛选出id为1的热门城市
+
+         for(var i = 0;i < cities.length;i ++) {
+            if(cities[i].isHot === 1) {
+               hotList.push(cities[i])
+            }
+         }
+
+         for(var i = 0;i < cities.length;i ++) {
+            // 截取第一个英文字母并转换为大写形式
+            var firstLetter = cities[i].py.substring(0,1).toUpperCase()
+            if(toCom(firstLetter)) { // 新添加index
+               cityList.push({ index: firstLetter,list: [{ nm: cities[i].nm, id: cities[i].id }]})
+            }else { // 累加到已有index索引中
+               for(var j = 0;j < cityList.length;j ++) {
+                  if(cityList[j].index === firstLetter) {
+                     cityList[j].list.push({ nm: cities[i].nm, id: cities[i].id })
+                  }
+               }
+            }
+
+         }
+
+         function toCom(firstLetter) {
+            for(var i = 0;i < cityList.length;i ++) {
+               if(cityList[i].index === firstLetter) {
+                  return false
+               }
+            }
+            return true
+         }
+
+         // console.log(cityList)
+
+         cityList.sort((n1,n2) => {
+            if(n1.index > n2.index) {
+               return 1
+            }else if(n1.index < n2.index) {
+               return -1
+            }else {
+               return 0
+            }
+         })
+
+         console.log(cityList)
+         console.log(hotList)
+         return {
+            cityList,
+            hotList
+         }
+      },
+      handleToIndex(index) {
+         var h2 = this.$refs.city_sort.getElementsByTagName('h2')
+         this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop
+      }
+   }
 }
 </script>
 
