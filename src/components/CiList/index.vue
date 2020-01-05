@@ -17,13 +17,59 @@
                <div>折扣卡</div>
             </div>
          </li>
+         <!-- <li v-for="item in cinemaList" :key="item.id">
+            <div>
+               <span>{{ item.nm }})</span>
+               <span class="q">
+                  <span class="price">{{ item.sellPrice }}</span> 元起
+               </span>
+            </div>
+            <div class="address">
+               <span>{{ item.addr }}</span>
+               <span>{{ item.distance }}</span>
+            </div>
+            <div class="card">
+               遍历对象也可以使用v-for指令,其中num遍历的是对象的属性名,key遍历的是对象的属性值
+               <div v-for="(num,key) in item.tag" v-if="num === 1" :key="key">{{ key | formatCard }}</div>
+            </div>
+         </li> -->
       </ul>
    </div>
 </template>
 
 <script>
 export default {
-   name: 'CiList'
+   name: 'CiList',
+   data() {
+      return {
+         cinemaList: []
+      }
+   },
+   mounted() {
+      this.axios.get('/api/cinemaList?cityId=3').then(res => {
+         var msg = res.data.msg;
+         if(msg === 'ok') {
+            this.cinemaList = res.data.data.cinemas;
+         }
+      })
+   },
+   filters: { // 局部过滤器
+      formatCard(key) {
+         var card = [
+            { key: 'allowRefund',value: '改签' },
+            { key: 'endose',value: '退' },
+            { key: 'sell',value: '折扣卡' },
+            { key: 'snack',value: '小吃' }
+         ];
+         for(var i = 0;i < card.length;i ++) {
+            if(card[i].key === key) {
+               return card[i].value
+            }
+         }
+         return '' // 都没有匹配到,给一个默认值 '空字符串
+      }
+   }
+    
 }
 </script>
 

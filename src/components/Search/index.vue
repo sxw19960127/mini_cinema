@@ -5,13 +5,13 @@
       <div class="search_input">
          <div class="search_input_wrapper">
             <i class="iconfont icon-sousuo"></i>
-            <input type="text">
+            <input type="text" v-model="message">
          </div>					
       </div>
       <div class="search_result">
          <h3>电影/电视剧/综艺</h3>
          <ul>
-            <li>
+            <!-- <li>
                <div class="img">
                   <img src="@/img/movie_1.jpg">
                </div>
@@ -24,19 +24,19 @@
                   <p>剧情,喜剧,犯罪</p>
                   <p>2018-11-16</p>
                </div>
-            </li>
-            <li>
+            </li> -->
+            <li v-for="item in moviesList" :key="item.id">
                <div class="img">
-                  <img src="@/img/movie_1.jpg">
+                  <img :src="item.img | setWH('128.180')">
                </div>
-               <div class="info">
+               <div class="info"> 
                   <p>
-                     <span>无名之辈</span>
-                     <span>8.5</span>
+                     <span>{{ item.nm }}</span>
+                     <span>{{ item.sc }}</span>
                   </p>
-                  <p>A Cool Fish</p>
-                  <p>剧情,喜剧,犯罪</p>
-                  <p>2018-11-16</p>
+                  <p>{{ item.enm }}</p>
+                  <p>{{ item.cat }}</p>
+                  <p>{{ item.rt }}</p>
                </div>
             </li>
          </ul>
@@ -46,7 +46,48 @@
 
 <script>
 export default {
-   name: 'Search'
+   name: 'Search',
+   data() {
+      return {
+         message: '',
+         moviesList: []
+      }
+   },
+   methods: {
+      // 1
+      cancelRequest() {
+         if(typeof this.source === 'function') {
+            this.source('终止请求')
+         }
+      }
+   },
+   watch: {
+      // 我们需要去监听message字段,所以下面只需要写上就能够监听到message数据的改变了
+      message(newValue) {
+         var that = this;
+         // 2
+         this.cancelRequest();
+         this.axios.get('/api/searchList?cityId=10&kw=' + newValue,{
+            cancelToken: new this.axios.CancelToken(function(c) {
+               that.source = c;
+            })
+         }).then(res => {
+            var msg = res.data.msg;
+            var movies = res.data.data.movies;
+            if(msg && movies) {
+               // 符合搜索要求的数据赋值给moviesList进行保存
+               this.moviesList = res.data.data.movies.list;
+            }
+         }).catch(err => {
+            if(this.axios.isCancel(err)) {
+               console.log('Rquest canceled', err.message); // 请求如果被取消,这里是返回取消的message
+            }else {
+               // handle error
+               console.log(err);
+            }
+         })
+      } 
+   }
 }
 </script>
 
