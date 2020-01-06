@@ -3,37 +3,43 @@
 <template>
    <div class="city_body">
       <div class="city_list">
-         <!-- <div class="city_hot">
-            <h2>热门城市</h2>
-            <ul class="clearfix">
-               <li>上海</li>
-            </ul>
-         </div>
-         <div class="city_sort">
+         <Loading v-if="flag" />
+         <Scroller v-else ref="city_List">
+            <!-- Scroller里面必须是一个子节点,所以我们可以使用一个div进行包裹一下 -->
             <div>
-               <h2>A</h2>
-               <ul>
-                  <li>阿拉善盟</li>
-                  <li>鞍山</li>
-                  <li>安庆</li>
-                  <li>安阳</li>
-               </ul>
+               <!-- <div class="city_hot">
+                  <h2>热门城市</h2>
+                  <ul class="clearfix">
+                     <li>上海</li>
+                  </ul>
+               </div>
+               <div class="city_sort">
+                  <div>
+                     <h2>A</h2>
+                     <ul>
+                        <li>阿拉善盟</li>
+                        <li>鞍山</li>
+                        <li>安庆</li>
+                        <li>安阳</li>
+                     </ul>
+                  </div>
+               </div> -->
+               <div class="city_hot">
+                  <h2>热门城市</h2>
+                  <ul class="clearfix">
+                     <li v-for="item in hotList" :key="item.id" @tap="handleToCity(item.nm,item.id)">{{ item.nm }}</li>
+                  </ul>
+               </div>
+               <div class="city_sort" ref="city_sort">
+                  <div v-for="item in cityList" :key="item.index">
+                     <h2>{{ item.index }}</h2>
+                     <ul>
+                        <li v-for="itemList in item.list" :key="itemList.id" @tap="handleToCity(itemList.nm,itemList.id)">{{ itemList.nm }}</li>
+                     </ul>
+                  </div>
+               </div>
             </div>
-         </div> -->
-         <div class="city_hot">
-            <h2>热门城市</h2>
-            <ul class="clearfix">
-               <li v-for="item in hotList" :key="item.id">{{ item.nm }}</li>
-            </ul>
-         </div>
-         <div class="city_sort" ref="city_sort">
-            <div v-for="item in cityList" :key="item.index">
-               <h2>{{ item.index }}</h2>
-               <ul>
-                  <li v-for="itemList in item.list" :key="itemList.id">{{ itemList.nm }}</li>
-               </ul>
-            </div>
-         </div>
+         </Scroller>
       </div>
       <div class="city_index">
          <ul>
@@ -54,23 +60,37 @@ export default {
    data() {
       return {
          cityList: [],
-         hotList: []
+         hotList: [],
+         flag: true
       }
    },
    mounted() {
-      this.axios.get('/api/cityList').then((res) => {
-         // console.log(res)
-         let msg = res.data.msg
-         if(msg === 'ok') {
-            // 获取到的所有数据
-            let cities = res.data.data.cities 
-            // [ { index: 'A',list: [{ name: '安徽',id: 1 },{ name: '埃及',id: 2 } ]} ] 将数据整理成这种结构
-            // 封装一个函数,将原始数据传递进去,以达到格式化的效果
-            var { cityList,hotList } = this.formatCityList(cities)
-            this.cityList = cityList;
-            this.hotList = hotList;
-         }
-      })
+      var cityList = window.localStorage.getItem('cityList');
+      var hotList = window.localStorage.getItem('hotList');
+
+      if(cityList && hotList) {
+         this.cityList = JSON.parse(cityList);
+         this.hotList = JSON.parse(hotList)
+         this.flag = false
+      }else {
+         this.axios.get('/api/cityList').then((res) => {
+            // console.log(res)
+            let msg = res.data.msg
+            if(msg === 'ok') {
+               // 获取到的所有数据
+               let cities = res.data.data.cities 
+               // [ { index: 'A',list: [{ name: '安徽',id: 1 },{ name: '埃及',id: 2 } ]} ] 将数据整理成这种结构
+               // 封装一个函数,将原始数据传递进去,以达到格式化的效果
+               var { cityList,hotList } = this.formatCityList(cities)
+               this.cityList = cityList;
+               this.hotList = hotList;
+               this.flag = false
+
+               window.localStorage.setItem('cityList', JSON.stringify(cityList));
+               window.localStorage.setItem('hotList', JSON.stringify(hotList))
+            }
+         })
+      }
    },
    methods: {
       formatCityList(cities) {
@@ -128,7 +148,15 @@ export default {
       },
       handleToIndex(index) {
          var h2 = this.$refs.city_sort.getElementsByTagName('h2')
-         this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop
+         // this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop;
+         // 将一个refs属性加到组件上,那么他就拿到当前的组件对象,然后我们.出对象的方法,记得加上负号
+         this.$refs.city_List.toScrollTop(-h2[index].offsetTop); 
+      },
+      handleToCity(nm,id) {
+         this.$store.commit('city/CITY_INFO', {nm,id})
+         window.localStorage.setItem('nowNm', nm);
+         window.localStorage.setItem('nowId', id);
+         this.$router.push('/movie/noePlaying');
       }
    }
 }

@@ -1,7 +1,8 @@
 <template>
    <div class="cinema_body">
+      <!-- <Loading v-if="flag" /> -->
       <ul>
-         <li v-for="(item,index) in 6" :key="item + index">
+         <li v-for="(item,index) in 3" :key="item + index">
             <div>
                <span>大地影院(澳东世纪店)</span>
                <span class="q">
@@ -42,14 +43,23 @@ export default {
    name: 'CiList',
    data() {
       return {
-         cinemaList: []
+         cinemaList: [],
+         // flag: true
+         prevCityId: -1
       }
    },
    mounted() {
+      // var cityId = this.$store.state.city.id // 1
+      // 如果两者id是不相等的,则直接走下面,如果相等,则return出去
+      // if( this.preCityId === cityId) {return;}
+      // 设置加载动画
+      // this.isLoading = true;
       this.axios.get('/api/cinemaList?cityId=3').then(res => {
          var msg = res.data.msg;
          if(msg === 'ok') {
             this.cinemaList = res.data.data.cinemas;
+            // this.flag = false
+            // this.preCityId = cityId
          }
       })
    },

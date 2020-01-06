@@ -65,9 +65,10 @@ export default {
       // 我们需要去监听message字段,所以下面只需要写上就能够监听到message数据的改变了
       message(newValue) {
          var that = this;
+         var cityId = this.$store.state.city.id
          // 2
          this.cancelRequest();
-         this.axios.get('/api/searchList?cityId=10&kw=' + newValue,{
+         this.axios.get('/api/searchList?cityId=' + cityId + '&kw=' + newValue,{
             cancelToken: new this.axios.CancelToken(function(c) {
                that.source = c;
             })
