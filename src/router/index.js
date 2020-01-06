@@ -29,7 +29,8 @@ const router = new VueRouter({
         {path: '/mine',component: Mine},
         {path: '/*',redirect: '/movie'} // 路由重定向,上述路由都不匹配的情况下
     ],
-    mode: 'history'
+    mode: 'history',
+    base: 'mini'
 })
 
 export default router  
