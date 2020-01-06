@@ -27,6 +27,7 @@
  
     <!-- 底部 -->
     <TabBar />
+    <router-view name="detail" />
   </div>
 </template>
 
@@ -96,7 +97,7 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 99999;
+      z-index: 99;
       .city_name{
         margin-left: 20px;
         height: 100%;
