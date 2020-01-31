@@ -52,7 +52,7 @@ export default {
          message: '',
          moviesList: []
       }
-   },
+   }, 
    methods: {
       // 1
       cancelRequest() {

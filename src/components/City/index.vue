@@ -2,7 +2,7 @@
 
 <template>
    <div class="city_body">
-      <div class="city_list">
+      <div class="city_list"> 
          <Loading v-if="flag" />
          <Scroller v-else ref="city_List">
             <!-- Scroller里面必须是一个子节点,所以我们可以使用一个div进行包裹一下 -->

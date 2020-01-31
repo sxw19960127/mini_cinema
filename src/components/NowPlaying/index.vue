@@ -3,7 +3,7 @@
 <template>
    <!-- 4.给父级容器起一个ref属性,用以找到他 -->
   <div class="movie_body" ref="movie_body">
-      <Loading v-if="flag" />
+      <Loading v-if="flag" /> 
       <Scroller v-else :handleToScroll = "handleToScroll" :handleToTouchEnd = "handleToTouchEnd">
          <ul>
                <!-- <li v-for="(item,index) in 10" :key="item + index">

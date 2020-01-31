@@ -41,7 +41,7 @@
 
 <script>
 export default {
-   name: 'ComingSoon',
+   name: 'ComingSoon', 
    data() {
       return {
          comingList: [],

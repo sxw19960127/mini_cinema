@@ -24,7 +24,7 @@
         <router-view></router-view>
       </keep-alive>
     </div>
- 
+
     <!-- 底部 -->
     <TabBar />
     <router-view name="detail" />
@@ -33,43 +33,46 @@
 
 <script>
 // 引入头部、底部组件
-import Header from '@/components/Header'
-import TabBar from '@/components/TabBar'
-import {messageBox} from '@/components/JS'
+import Header from "@/components/Header";
+import TabBar from "@/components/TabBar";
+import { messageBox } from "@/components/JS";
 export default {
-  name: 'Movie',
+  name: "Movie",
   components: {
     // 注册局部组件
     Header,
     TabBar
   },
   mounted() {
-    setTimeout(() => { // 数据请求回来之后,延迟几秒再弹出城市定位
-        this.axios.get('/api/getLocation').then(res => {
-            var msg = res.data.msg;
-            if(msg === 'ok') {
-                var nm = res.data.data.nm;
-                var id = res.data.data.id;
-                if(this.$store.state.city.id == id) {return;}
-                messageBox({
-                    title: '定位',
-                    content: nm,
-                    cancel: '取消',
-                    ok: '切换定位',
-                    handleCancel() {
-						          // console.log(1)
-                    },
-                    handleOk() {
-                      window.localStorage.setItem('nowNm',nm);
-                      window.localStorage.setItem('nowId',id);
-                      // 当切换的时候,我们重新加载一下我们的页面
-                      window.location.reload()
-                    }
-                })
+    setTimeout(() => {
+      // 数据请求回来之后,延迟几秒再弹出城市定位
+      this.axios.get("/api/getLocation").then(res => {
+        var msg = res.data.msg;
+        if (msg === "ok") {
+          var nm = res.data.data.nm;
+          var id = res.data.data.id;
+          if (this.$store.state.city.id == id) {
+            return;
+          }
+          messageBox({
+            title: "定位",
+            content: nm,
+            cancel: "取消",
+            ok: "切换定位",
+            handleCancel() {
+              // console.log(1)
+            },
+            handleOk() {
+              window.localStorage.setItem("nowNm", nm);
+              window.localStorage.setItem("nowId", id);
+              // 当切换的时候,我们重新加载一下我们的页面
+              window.location.reload();
             }
-        })
-    }, 3000)
-}
+          });
+        }
+      });
+    }, 3000);
+  }
   // mounted() {
   //   messageBox({
   //     title: '定位',
@@ -84,50 +87,50 @@ export default {
   //     }
   //   })
   // }
-}
+};
 </script>
 
 <style lang="scss" scoped>
-  #content{
-    .movie_menu{
-      width: 100%;
-      height: 45px;
-      background: white;
-      border-bottom: 1px solid #e6e6e6;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 99;
-      .city_name{
-        margin-left: 20px;
-        height: 100%;
-        line-height: 45px;
-      }
-      .hot_swtich{
-        height: 100%;
-        line-height: 45px;
-        display: flex;
-        .hot_item{
-          font-size: 15px;
-          width: 80px;
-          color: #666;
-          text-align: center;
-          margin: 0 12px;
-          font-weight: 700;
-        }
-      }
-    }
-    .search_entry{
-      margin-right: 20px;
+#content {
+  .movie_menu {
+    width: 100%;
+    height: 45px;
+    background: white;
+    border-bottom: 1px solid #e6e6e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 99;
+    .city_name {
+      margin-left: 20px;
       height: 100%;
       line-height: 45px;
-      i{
-        font-size:24px; 
+    }
+    .hot_swtich {
+      height: 100%;
+      line-height: 45px;
+      display: flex;
+      .hot_item {
+        font-size: 15px;
+        width: 80px;
+        color: #666;
+        text-align: center;
+        margin: 0 12px;
+        font-weight: 700;
       }
     }
-    .router-link-active{
-      color: #ef4238;
-      border-bottom: 2px solid #ef4238;
+  }
+  .search_entry {
+    margin-right: 20px;
+    height: 100%;
+    line-height: 45px;
+    i {
+      font-size: 24px;
     }
   }
+  .router-link-active {
+    color: #ef4238;
+    border-bottom: 2px solid #ef4238;
+  }
+}
 </style>

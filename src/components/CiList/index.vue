@@ -47,7 +47,7 @@ export default {
          // flag: true
          prevCityId: -1
       }
-   },
+   }, 
    mounted() {
       // var cityId = this.$store.state.city.id // 1
       // 如果两者id是不相等的,则直接走下面,如果相等,则return出去
