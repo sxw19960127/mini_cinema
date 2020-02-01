@@ -3,21 +3,23 @@ import MessageBox from './MessageBox'
 
 // 暴露出一个接口,考虑到接口可能有很多,我们使用了闭包去解决
 export var messageBox = (function() {
-   // 给我们定制的模板一些默认参数
-   var default1 = {
-      title: '',
-      content: '',
-      cancel: '',
-      ok: '',
-      handleCancel: null,
-      handleOk: null
-   }
 
-   var MyComponent = Vue.extend(MessageBox)
 
    // 调用之后返回的函数出去
    // 将配置参数opts传递进去
    return function(opts) {
+      // 给我们定制的模板一些默认参数
+      var default1 = {
+         title: '',
+         content: '',
+         cancel: '',
+         ok: '',
+         handleCancel: null,
+         handleOk: null
+      }
+
+      var MyComponent = Vue.extend(MessageBox)
+
       // 将外面的配置参数进行循环遍历并且覆盖
       for(var attr in opts) {
          default1[attr] = opts[attr];

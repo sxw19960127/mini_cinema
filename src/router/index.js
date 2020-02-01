@@ -45,6 +45,28 @@ const router = new VueRouter({
             component: Cinema
         },
         {
+            path: '/admin',
+            component: () => import('@/views/Admin'),
+            children: [
+                {
+                    path: 'users',
+                    component: () => import('@/views/Admin/users.vue')
+                },
+                {
+                    path: 'movie',
+                    component: () => import('@/views/Admin/movie.vue')
+                },
+                {
+                    path: 'cinema',
+                    component: () => import('@/views/Admin/cinema.vue')
+                },
+                {
+                    path: '/admin', // 重定向
+                    component: () => import('@/views/Admin/users.vue')
+                }
+            ]
+        },
+        {
             path: '/mine',
             component: Mine,
             children: [
