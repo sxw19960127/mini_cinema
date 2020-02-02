@@ -3,7 +3,7 @@
     <div class="register_email">
       邮箱：
       <input v-model="email" class="register_text" type="text" />
-      <button @touchstart="handleToVerify">发送验证码</button>
+      <button :disabled="disabled" @touchstart="handleToVerify">{{ verifyInfo }}</button>
     </div>
     <div>
       用户名：
@@ -41,20 +41,27 @@ export default {
       email: "",
       username: "",
       password: "",
-      verify: ""
+      verify: "",
+      verifyInfo: '发送验证码', // 1.验证码的显示字段
+      disabled: false
     };
   },
   methods: {
     handleToVerify() {
+      if(this.disabled) {return;}
       // 验证码功能
       this.axios.get("/api2/users/verify?email=" + this.email).then(res => {
         var status = res.data.status;
+        var This = this;
         if (status === 0) {
           // 验证码发送成功,需要导入messageBox组件来做一个提示用户作用
           messageBox({
             title: "验证码",
             content: "验证码发送成功",
-            ok: "确定"
+            ok: "确定",
+            handleOk() {
+              This.countDown();
+            }
           });
         } else {
           messageBox({
@@ -93,6 +100,21 @@ export default {
             });
           }
         });
+    },
+    countDown() { // 倒计时的功能
+      this.disabled = true;
+      var count = 60;
+      var timer = setInterval(() => {
+        count --;
+        this.verifyInfo = '剩余' + count + '秒';
+        if(count === 0) {
+          this.disabled = false;
+          count = 60;
+          this.verifyInfo = '发送验证码';
+          clearInterval(timer);
+        }
+      }, 1000)
+      // console.log(timer)
     }
   }
 };
